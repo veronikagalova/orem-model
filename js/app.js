@@ -127,8 +127,8 @@
     for (var i = 0; i < DIRECTORY.length; i++) if (DIRECTORY[i].region === name) return DIRECTORY[i];
     return null;
   }
-  // в карточке ГТП выбирается один из двух классов мощности (индексы 1 и 2 в POWER_CLASSES)
-  var POWER_CHOICES = [1, 2];
+  // класс мощности выбирается в карточке ГТП (индекс в POWER_CLASSES)
+  var POWER_CHOICES = [0, 1, 2];
   function powerClass(p) {
     var i = parseInt(p, 10);
     return POWER_CHOICES.indexOf(i) >= 0 ? i : -1;
@@ -1241,10 +1241,10 @@
   function oldPower(v) {
     if (v == null || v === '') return '';
     var n = num(v);
-    if (n === 1 || n === 2) return String(n);
+    if (n === 0 || n === 1 || n === 2) return String(n);
     if (n >= 10000) return '2';
     if (n >= 670) return '1';
-    return '';
+    return '0';
   }
 
   function adopt(data) {
@@ -1671,7 +1671,7 @@
       '<ol style="margin:0;padding-left:18px;font-size:11px;color:' +
         C.muted +
         ';line-height:1.6">' +
-        '<li>Класс мощности ГТП выбирается по максимальной мощности ЭПУ: от 670 кВт до 10 МВт или не менее 10 МВт.</li>' +
+        '<li>Класс мощности ГТП выбирается по максимальной мощности ЭПУ: менее 670 кВт, от 670 кВт до 10 МВт или не менее 10 МВт.</li>' +
         '<li>Сбытовые надбавки ГП (руб./кВт·ч без НДС): k₁ — ' +
         PERIODS[0].label +
         ', k₂ — ' +
