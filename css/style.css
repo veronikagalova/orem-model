@@ -662,7 +662,7 @@ svg.i {
 
 @container (min-width: 540px) {
   .params {
-    grid-template-columns: 1fr 1.5fr 0.8fr;
+    grid-template-columns: 1fr 1.4fr 1fr;
   }
 }
 
@@ -755,18 +755,6 @@ select.field:disabled {
   background: none;
 }
 
-.power-class {
-  display: block;
-  min-height: 16px;
-  margin-top: 5px;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.power-class.ok {
-  color: var(--violet);
-}
 
 .supplier-info {
   display: flex;

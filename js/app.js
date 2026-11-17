@@ -127,11 +127,11 @@
     for (var i = 0; i < DIRECTORY.length; i++) if (DIRECTORY[i].region === name) return DIRECTORY[i];
     return null;
   }
+  // в карточке ГТП выбирается один из двух классов мощности (индексы 1 и 2 в POWER_CLASSES)
+  var POWER_CHOICES = [1, 2];
   function powerClass(p) {
-    if (p === '' || p == null || num(p) < 0) return -1;
-    var v = num(p);
-    for (var i = 0; i < POWER_CLASSES.length; i++) if (POWER_CLASSES[i].match(v)) return i;
-    return -1;
+    var i = parseInt(p, 10);
+    return POWER_CHOICES.indexOf(i) >= 0 ? i : -1;
   }
   function pointById(id) {
     for (var i = 0; i < model.points.length; i++) if (model.points[i].id === id) return model.points[i];
@@ -295,11 +295,20 @@
       '" role="combobox" aria-expanded="false" aria-autocomplete="list">' +
       '<ul class="region-list" role="listbox" hidden></ul></div></div>' +
       '<label class="field-wrap"><span class="field-name">Гарантирующий поставщик</span><select class="field" data-key="supplier"></select></label>' +
-      '<label class="field-wrap"><span class="field-name">Мощность ЭПУ, кВт</span><span>' +
-      '<input class="field" type="number" min="0" step="any" inputmode="decimal" data-key="power" placeholder="например, 1500" value="' +
-      esc(pt.power) +
-      '">' +
-      '<span class="power-class" data-out="cls"></span></span></label>' +
+      '<label class="field-wrap"><span class="field-name">Мощность ЭПУ</span>' +
+      '<select class="field" data-key="power"><option value="">Выберите мощность</option>' +
+      POWER_CHOICES.map(function (c) {
+        return (
+          '<option value="' +
+          c +
+          '"' +
+          (String(pt.power) === String(c) ? ' selected' : '') +
+          '>' +
+          POWER_CLASSES[c].label +
+          '</option>'
+        );
+      }).join('') +
+      '</select></label>' +
       '</div>' +
       '<div class="supplier-info" data-out="coef"></div>' +
       '<p class="volume-hint">Введите месячный объём потребления электроэнергии по ГТП, кВт·ч</p>' +
@@ -1096,9 +1105,6 @@
       var res = r.perPoint[idx];
       $('[data-out="badge"]', card).textContent = 'ГТП ' + (idx + 1);
       $('[data-act="drop"]', card).disabled = model.points.length < 2;
-      var clsEl = $('[data-out="cls"]', card);
-      clsEl.textContent = res.cls >= 0 ? 'Класс: ' + POWER_CLASSES[res.cls].label : 'укажите мощность';
-      clsEl.classList.toggle('ok', res.cls >= 0);
       var coef = $('[data-out="coef"]', card);
       if (res.ks) {
         coef.className = 'supplier-info ok';
@@ -1231,6 +1237,16 @@
       }
     }, 400);
   }
+  // в старых черновиках мощность хранилась числом в кВт
+  function oldPower(v) {
+    if (v == null || v === '') return '';
+    var n = num(v);
+    if (n === 1 || n === 2) return String(n);
+    if (n >= 10000) return '2';
+    if (n >= 670) return '1';
+    return '';
+  }
+
   function adopt(data) {
     var base = defaultModel();
     if (!data || !Array.isArray(data.points) || !data.points.length) throw new Error('bad');
@@ -1243,7 +1259,7 @@
         name: p.name || '',
         region: p.region || '',
         supplier: p.supplier || '',
-        power: p.power == null ? '' : p.power,
+        power: oldPower(p.power),
         vol: vol.map(function (x) {
           return x == null ? '' : String(x);
         }),
@@ -1445,8 +1461,7 @@
         ' · ' +
         (pt.supplier ? esc(pt.supplier) : 'ГП не выбран') +
         ' · мощность ЭПУ ' +
-        (pt.power !== '' ? nfQty.format(num(pt.power)) + ' кВт' : '—') +
-        (e.cls >= 0 ? ' (' + POWER_CLASSES[e.cls].label + ')' : '') +
+        (e.cls >= 0 ? POWER_CLASSES[e.cls].label : '—') +
         (e.ks
           ? '<br>k₁ (' +
             PERIODS[0].label +
@@ -1656,7 +1671,7 @@
       '<ol style="margin:0;padding-left:18px;font-size:11px;color:' +
         C.muted +
         ';line-height:1.6">' +
-        '<li>Класс мощности ГТП — по максимальной мощности ЭПУ: менее 670 кВт; от 670 кВт до 10 МВт; не менее 10 МВт.</li>' +
+        '<li>Класс мощности ГТП выбирается по максимальной мощности ЭПУ: от 670 кВт до 10 МВт или не менее 10 МВт.</li>' +
         '<li>Сбытовые надбавки ГП (руб./кВт·ч без НДС): k₁ — ' +
         PERIODS[0].label +
         ', k₂ — ' +
