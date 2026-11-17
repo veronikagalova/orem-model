@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ОРЭМ·Расчёт — оценка целесообразности выхода на оптовый рынок</title>
+    <meta
+      name="description"
+      content="Экономико-математическая модель оценки целесообразности выхода промышленных потребителей на оптовый рынок электрической энергии и мощности (ОРЭМ)"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+      <symbol id="ic-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
+      </symbol>
+      <symbol id="ic-copy" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="12" height="12" rx="2" />
+        <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+      </symbol>
+      <symbol id="ic-down" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></symbol>
+      <symbol id="ic-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" /></symbol>
+      <symbol id="ic-alert" viewBox="0 0 24 24">
+        <path
+          d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"
+        />
+      </symbol>
+      <symbol id="ic-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7M5 10v10h5v-6h4v6h5V10" /></symbol>
+      <symbol id="ic-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
+      <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
+      <symbol id="ic-calc" viewBox="0 0 24 24">
+        <rect x="5" y="3" width="14" height="18" rx="2" />
+        <path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h2M12 18h4" />
+      </symbol>
+      <symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></symbol>
+      <symbol id="ic-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v6M12 7.5h.01" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <a class="logo" href="#/">ОРЭМ<span>·</span>модель</a>
+          <button class="burger" id="btnMenu" type="button" aria-label="Меню" aria-expanded="false">
+            <svg class="i"><use href="#ic-menu" /></svg>
+          </button>
+        </div>
+        <p class="sidebar-about">
+          Оценка целесообразности выхода промышленного потребителя на оптовый рынок электроэнергии
+        </p>
+        <nav class="menu" id="menu" aria-label="Разделы">
+          <a href="#/" data-route=""
+            ><i class="menu-icon"
+              ><svg class="i"><use href="#ic-home" /></svg></i
+            >Главная</a
+          >
+          <a href="#/raschet" data-route="raschet"
+            ><i class="menu-icon"
+              ><svg class="i"><use href="#ic-calc" /></svg></i
+            >Расчёт</a
+          >
+          <a href="#/analitika" data-route="analitika"
+            ><i class="menu-icon"
+              ><svg class="i"><use href="#ic-chart" /></svg></i
+            >Аналитика</a
+          >
+          <a href="#/metodika" data-route="metodika"
+            ><i class="menu-icon"
+              ><svg class="i"><use href="#ic-info" /></svg></i
+            >Методика</a
+          >
+        </nav>
+        <svg class="sidebar-line" viewBox="0 0 180 60" fill="none" aria-hidden="true">
+          <g stroke="currentColor" stroke-width="1.2">
+            <path d="M0 30h180" stroke-dasharray="2 4" />
+            <path d="M20 10v40M90 10v40M160 10v40" />
+            <path d="M20 18 C55 34 55 34 90 18 S125 2 160 18" />
+          </g>
+          <g fill="currentColor">
+            <circle cx="20" cy="18" r="2.5" />
+            <circle cx="90" cy="18" r="2.5" />
+            <circle cx="160" cy="18" r="2.5" />
+          </g>
+        </svg>
+        <div class="sidebar-bottom">
+          <span id="savedAt"></span>
+          <span>2026</span>
+        </div>
+      </aside>
+      <div class="main">
+        <!-- Главная -->
+        <section class="page" data-page="" data-title="Главная">
+          <div class="wrap home">
+            <div class="hero">
+              <div class="hero-text">
+                <span class="label">Экономико-математическая модель</span>
+                <h1 class="home-title">
+                  Выгодно ли предприятию уйти с розницы на оптовый рынок электроэнергии?
+                </h1>
+                <p class="home-lead">
+                  Потребитель на розничном рынке платит гарантирующему поставщику сбытовую надбавку. На ОРЭМ
+                  её нет — но появляются свои расходы: персонал, взносы, сопровождение. Модель сравнивает одно
+                  с другим и показывает, окупается ли выход.
+                </p>
+                <a class="hero-link" href="#/raschet"
+                  >Перейти к расчёту<svg class="i"><use href="#ic-arrow" /></svg
+                ></a>
+              </div>
+            </div>
+            <div class="facts">
+              <div class="fact">
+                <span class="fact-name">Справочник</span><b id="stRegions">0</b
+                ><span class="fact-text">регионов РФ</span><i class="fact-bar"><i style="width: 100%"></i></i>
+              </div>
+              <div class="fact">
+                <span class="fact-name">Поставщики</span><b id="stSuppliers">0</b
+                ><span class="fact-text">гарантирующих поставщиков</span
+                ><i class="fact-bar"><i style="width: 100%"></i></i>
+              </div>
+              <div class="fact">
+                <span class="fact-name">С 1 октября 2026</span><b id="stGrowth">0</b
+                ><span class="fact-text">средний рост сбытовых надбавок, 670 кВт – 10 МВт</span
+                ><i class="fact-bar"><i style="width: 41%"></i></i>
+              </div>
+            </div>
+            <div class="sections">
+              <a class="section-card" href="#/raschet"
+                ><span class="num">01</span><b>Расчёт</b
+                ><span class="descr">Экономия, затраты, эффект, срок окупаемости и отчёт в PDF</span
+                ><em>Открыть →</em></a
+              >
+              <a class="section-card" href="#/analitika"
+                ><span class="num">02</span><b>Аналитика</b
+                ><span class="descr">Как изменились сбытовые надбавки по регионам</span><em>Открыть →</em></a
+              >
+              <a class="section-card" href="#/metodika"
+                ><span class="num">03</span><b>Методика</b
+                ><span class="descr">Формулы, допущения и источники данных</span><em>Открыть →</em></a
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- Расчёт -->
+        <section class="page" data-page="raschet" data-title="Расчёт">
+          <div class="wrap">
+            <div class="page-head">
+              <div>
+                <span class="label">01 · Расчёт</span>
+                <h1 class="h1">Расчёт</h1>
+                <p class="subtitle">
+                  Заполните данные по каждой ГТП — справа сразу видно, окупается ли выход на оптовый рынок.
+                </p>
+              </div>
+              <div class="toolbar">
+                <button class="btn btn-main" id="btnSave" type="button" title="Скачать отчёт в PDF">
+                  <svg class="i"><use href="#ic-down" /></svg>Сохранить PDF
+                </button>
+                <button class="btn" id="btnReset" type="button">
+                  <svg class="i"><use href="#ic-reset" /></svg>Сброс
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="calc">
+            <div>
+              <section class="block" aria-labelledby="t-gtp">
+                <div class="block-head">
+                  <h2 class="block-title" id="t-gtp"><span class="num">01</span>Группы точек поставки</h2>
+                  <span class="block-note" id="gtpCount"></span>
+                </div>
+                <div id="gtpList"></div>
+                <button class="add-gtp" id="btnAdd" type="button">
+                  <svg class="i"><use href="#ic-plus" /></svg>Добавить ГТП
+                </button>
+              </section>
+
+              <section class="block" aria-labelledby="t-cost">
+                <div class="block-head">
+                  <h2 class="block-title" id="t-cost">
+                    <span class="num">02</span>Затраты на выход и работу на ОРЭМ
+                  </h2>
+                  <span class="block-note">за год</span>
+                </div>
+                <div class="box costs">
+                  <table class="costs-table">
+                    <thead>
+                      <tr>
+                        <th>Статья</th>
+                        <th class="r">Ставка, ₽</th>
+                        <th class="r">Кол-во</th>
+                        <th class="r">В месяц</th>
+                        <th class="r">За год</th>
+                      </tr>
+                    </thead>
+                    <tbody id="costBody"></tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="4">Итого затраты</td>
+                        <td class="r money" id="costTotal">0</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </section>
+            </div>
+
+            <aside class="results" aria-label="Результаты">
+              <div class="verdict" id="verdict">
+                <div><b>Введите данные</b><span>Заполните хотя бы одну ГТП</span></div>
+              </div>
+              <div class="indicators">
+                <div class="indicator" id="kSave"><span>Экономия за год</span><b>0</b></div>
+                <div class="indicator" id="kCost"><span>Затраты за год</span><b>0</b></div>
+                <div class="indicator" id="kEffect">
+                  <span>Эффект</span><b>0</b><small>экономия − затраты</small>
+                </div>
+                <div class="indicator" id="kEff">
+                  <span>Эффективность</span><b>0 %</b><small>экономия / затраты</small>
+                </div>
+                <div class="indicator payback" id="kPay">
+                  <div>
+                    <span>Срок окупаемости</span><small>с учётом разовых платежей в начале года</small>
+                  </div>
+                  <b>—</b>
+                </div>
+              </div>
+              <div class="box chart-box">
+                <h3>Накопленный результат, ₽</h3>
+                <svg
+                  id="chart"
+                  viewBox="0 0 600 260"
+                  role="img"
+                  aria-label="График накопленной экономии и затрат"
+                ></svg>
+                <div class="legend">
+                  <span><i style="background: var(--violet)"></i>Экономия</span
+                  ><span><i style="background: var(--red)"></i>Затраты</span
+                  ><span><i style="background: var(--violet-light)"></i>Точка окупаемости</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- Аналитика -->
+        <section class="page" data-page="analitika" data-title="Аналитика">
+          <div class="wrap">
+            <div class="page-head">
+              <div>
+                <span class="label">02 · Аналитика</span>
+                <h1 class="h1">Темп роста сбытовых надбавок</h1>
+                <p class="subtitle">
+                  Насколько изменились надбавки с 1 октября 2026 года по сравнению с первыми девятью месяцами
+                  — по регионам и в среднем по стране.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="wrap">
+            <div class="box analytics">
+              <div class="filters">
+                <div class="tabs" id="anClass" role="tablist" aria-label="Класс мощности"></div>
+                <input class="field search" id="anSearch" type="search" placeholder="Поиск региона" />
+                <select class="field sort" id="anSort" aria-label="Сортировка">
+                  <option value="desc">По убыванию роста</option>
+                  <option value="asc">По возрастанию роста</option>
+                  <option value="abc">По алфавиту</option>
+                </select>
+                <button class="small-btn" id="anCsv" type="button">Экспорт CSV</button>
+              </div>
+              <div class="summary" id="anKpis"></div>
+              <div class="regions" id="anList"></div>
+              <p class="note">
+                Темп роста = k₂ / k₁ − 1; по региону — среднее по его ГП. <i class="dot"></i> — регион
+                используется в расчёте.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Методика -->
+        <section class="page" data-page="metodika" data-title="Методика">
+          <div class="wrap">
+            <div class="page-head">
+              <div>
+                <span class="label">03 · Методика</span>
+                <h1 class="h1">Методика расчёта</h1>
+                <p class="subtitle">Откуда берутся цифры на странице расчёта.</p>
+              </div>
+            </div>
+          </div>
+          <div class="wrap method">
+            <div class="method-main">
+              <article class="box article">
+                <h2>Формулы</h2>
+                <div class="formulas">
+                  <div class="formula">
+                    <span>Экономия по ГТП</span><code>Эᵢ = k₁·ΣW(янв–сен) + k₂·ΣW(окт–дек)</code>
+                  </div>
+                  <div class="formula"><span>Общая экономия</span><code>Э = Э₁ + Э₂ + … + Эₙ</code></div>
+                  <div class="formula"><span>Затраты</span><code>З = Зштат + Зинфр + Зпроч</code></div>
+                  <div class="formula"><span>Эффект</span><code>Эф = Э − З</code></div>
+                  <div class="formula"><span>Эффективность</span><code>E = Э / З · 100 %</code></div>
+                  <div class="formula"><span>Срок окупаемости</span><code>месяц, когда ΣЭ ≥ ΣЗ</code></div>
+                </div>
+                <p class="muted">
+                  k₁, k₂ — сбытовые надбавки ГП для класса мощности ГТП в первом и втором периоде, руб./кВт·ч;
+                  W — потребление за месяц, кВт·ч. Зштат = 12·Σ(оклад·численность) — штат специалистов по
+                  работе на ОРЭМ; Зинфр — затраты на инфраструктуру ОРЭМ (ставка × количество); Зпроч =
+                  12·прочие расходы в месяц.
+                </p>
+              </article>
+              <article class="box article">
+                <h2>Классы мощности и периоды</h2>
+                <table class="simple-table">
+                  <tr>
+                    <th>Класс</th>
+                    <th>Максимальная мощность ЭПУ</th>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>менее 670 кВт</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>от 670 кВт до 10 МВт</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>не менее 10 МВт</td>
+                  </tr>
+                </table>
+                <table class="simple-table">
+                  <tr>
+                    <th>Период</th>
+                    <th>Даты</th>
+                    <th>Месяцы расчёта</th>
+                  </tr>
+                  <tr>
+                    <td>П1</td>
+                    <td>01.01.2026 – 30.09.2026</td>
+                    <td>январь – сентябрь</td>
+                  </tr>
+                  <tr>
+                    <td>П2</td>
+                    <td>01.10.2026 – 31.12.2026</td>
+                    <td>октябрь – декабрь</td>
+                  </tr>
+                </table>
+              </article>
+              <article class="box article">
+                <h2>Вывод о целесообразности</h2>
+                <ul class="verdict-list">
+                  <li>
+                    <i style="background: var(--green)"></i><b>Целесообразен</b> — эффект положительный,
+                    эффективность не ниже 120 %.
+                  </li>
+                  <li>
+                    <i style="background: var(--amber)"></i><b>На грани окупаемости</b> — эффект
+                    положительный, но запас меньше 20 %.
+                  </li>
+                  <li>
+                    <i style="background: var(--red)"></i><b>Нецелесообразен</b> — затраты превышают экономию.
+                  </li>
+                </ul>
+                <p class="muted">
+                  Допущение: разовые платежи учитываются в начале года, ежемесячные расходы распределяются
+                  равномерно.
+                </p>
+              </article>
+              <article class="box article">
+                <h2>Источник данных</h2>
+                <ol class="sources">
+                  <li>
+                    Сайт органа регулирования тарифов субъекта РФ (например, Комитета по тарифам
+                    Санкт-Петербурга), раздел «Тарифы».
+                  </li>
+                  <li>
+                    Тарифы на электрическую энергию за 2026 год → сбытовые надбавки гарантирующих поставщиков.
+                  </li>
+                  <li>Распоряжение (приказ) об установлении сбытовых надбавок и приложение к нему.</li>
+                  <li>
+                    Надбавки для прочих потребителей, дифференцированные по максимальной мощности ЭПУ,
+                    заносятся в сводную таблицу.
+                  </li>
+                </ol>
+              </article>
+            </div>
+            <aside class="method-side">
+              <div class="box article terms">
+                <h2>Термины</h2>
+                <dl>
+                  <dt>ОРЭМ</dt>
+                  <dd>Оптовый рынок электрической энергии и мощности</dd>
+                  <dt>ГТП</dt>
+                  <dd>Группа точек поставки — объект учёта на оптовом рынке</dd>
+                  <dt>ГП</dt>
+                  <dd>Гарантирующий поставщик электрической энергии</dd>
+                  <dt>ЭПУ</dt>
+                  <dd>Энергопринимающие устройства потребителя</dd>
+                  <dt>Сбытовая надбавка</dt>
+                  <dd>Составляющая цены ГП, руб./кВт·ч без НДС</dd>
+                  <dt>Эффективность</dt>
+                  <dd>Отношение экономии к затратам, %</dd>
+                </dl>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
